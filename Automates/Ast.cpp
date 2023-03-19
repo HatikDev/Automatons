@@ -2,9 +2,11 @@
 #include "Constants.h"
 #include "Utils.h"
 
+#include <fstream>
 #include <iostream>
 #include <tuple>
 #include <vector>
+#include <queue>
 
 namespace
 {
@@ -193,6 +195,41 @@ void printAST(Node* tree, size_t level)
         printAST(tree->getChildLeft(), level + 1);
     if (tree->getChildRight())
         printAST(tree->getChildRight(), level + 1);
+}
+
+void printASTInFile(std::string filename, Node* tree)
+{
+    if (!tree)
+        throw std::runtime_error("tree is empty");
+
+    std::ofstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("can't open file");
+
+    // id:%id% left:%left% right:%right% value:%value%
+
+    std::queue<Node*> nodes;
+    nodes.push(tree);
+    while (!nodes.empty())
+    {
+        Node* currentNode = nodes.front();
+        Node* leftNode = currentNode->getChildLeft();
+        Node* rightNode = currentNode->getChildRight();
+        const std::string& value = currentNode->getValue();
+        
+        nodes.pop();
+
+        file << "id:" << currentNode
+             << " left:" << leftNode << " right:" << rightNode
+             << " value:" << value << std::endl;
+
+        if (leftNode)
+            nodes.push(leftNode);
+        if (rightNode)
+            nodes.push(rightNode);
+    }
+
+    file.close();
 }
 
 std::vector<Node*> makeAST(std::string regex)

@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
     printAST(ast[0]);
 
     assert(ast.size() == 1);
+
+    printASTInFile("ast.txt", ast[0]);
     //makeNFA(ast[0]);
 
     removeTree(ast[0]);
