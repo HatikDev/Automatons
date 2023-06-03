@@ -8,54 +8,62 @@ class Node
 {
 public:
     Node(std::string value, Node* childLeft = NULL, Node* childRight = NULL)
-        : value{value}, childLeft{childLeft}, childRight{childRight}, automaton{NULL}
+        : m_id{globalID++}, m_value{value}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{NULL}
     {}
     Node(const Node&) = delete;
     ~Node() {}
 
+    uint64_t getID()
+    {
+        return m_id;
+    }
+
     std::string getValue()
     {
-        return value;
+        return m_value;
     }
 
     void setValue(const std::string& value)
     {
-        this->value = value;
+        this->m_value = value;
     }
 
     Node* getChildLeft()
     {
-        return childLeft;
+        return m_childLeft;
     }
 
     void setChildLeft(Node* node)
     {
-        childLeft = node;
+        m_childLeft = node;
     }
 
     Node* getChildRight()
     {
-        return childRight;
+        return m_childRight;
     }
 
     void setChildRight(Node* node)
     {
-        childRight = node;
+        m_childRight = node;
     }
 
     void setAutomaton(Automaton* automaton)
     {
-        this->automaton = automaton;
+        m_automaton = automaton;
     }
 
     Automaton* getAutomaton()
     {
-        return automaton;
+        return m_automaton;
     }
 
 private:
-    std::string value;
-    Node* childLeft;
-    Node* childRight;
-    Automaton* automaton;
+    uint64_t m_id;
+    std::string m_value;
+    Node* m_childLeft;
+    Node* m_childRight;
+    Automaton* m_automaton;
+
+    static uint64_t globalID;
 };

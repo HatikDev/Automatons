@@ -206,7 +206,7 @@ void printASTInFile(std::string filename, Node* tree)
     if (!file.is_open())
         throw std::runtime_error("can't open file");
 
-    // id:%id% left:%left% right:%right% value:%value%
+    // id:%id% left:%left id% right:%right id% value:%value%
 
     std::queue<Node*> nodes;
     nodes.push(tree);
@@ -219,8 +219,9 @@ void printASTInFile(std::string filename, Node* tree)
         
         nodes.pop();
 
-        file << "id:" << currentNode
-             << " left:" << leftNode << " right:" << rightNode
+        file << "id:" << currentNode->getID()
+             << " left:" << (leftNode ? leftNode->getID() : 0)
+             << " right:" << (rightNode ? rightNode->getID() : 0)
              << " value:" << value << std::endl;
 
         if (leftNode)
