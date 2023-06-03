@@ -7,8 +7,8 @@ class Automaton;
 class Node
 {
 public:
-    Node(std::string value, Node* childLeft = NULL, Node* childRight = NULL)
-        : m_id{globalID++}, m_value{value}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{NULL}
+    Node(std::string value, Node* parent, Node* childLeft = NULL, Node* childRight = NULL)
+        : m_id{globalID++}, m_value{value}, m_parent{parent}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{NULL}
     {}
     Node(const Node&) = delete;
     ~Node() {}
@@ -26,6 +26,11 @@ public:
     void setValue(const std::string& value)
     {
         this->m_value = value;
+    }
+
+    Node* getParent()
+    {
+        return m_parent;
     }
 
     Node* getChildLeft()
@@ -61,6 +66,7 @@ public:
 private:
     uint64_t m_id;
     std::string m_value;
+    Node* m_parent;
     Node* m_childLeft;
     Node* m_childRight;
     Automaton* m_automaton;

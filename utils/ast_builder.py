@@ -3,8 +3,9 @@ from collections import deque
 import math
 
 class Node:
-    def __init__(self, id, left, right, value):
+    def __init__(self, id, parent, left, right, value):
         self.id = id
+        self.parent = parent
         self.left = left
         self.right = right
         self.value = value
@@ -21,11 +22,14 @@ def read_nodes(filename):
             key, value = map(str, param.split(":"))
             # match key:
             #     case "id": node_id = value
+            #     case "parent": node_parent = value
             #     case "left": node_left = value
             #     case "right": node_right = value
             #     case "value": node_value = value
             if key == "id":
                 node_id = value
+            if key == "parent":
+                node_parent = value
             if key == "left":
                 node_left = value
             if key == "right":
@@ -34,10 +38,22 @@ def read_nodes(filename):
                 node_value = value
         if is_first_node:
             nodes["root"] = node_id
-        nodes[node_id] = Node(node_id, node_left, node_right, node_value)
+        nodes[node_id] = Node(node_id, node_parent, node_left, node_right, node_value)
         is_first_node = False
     file.close()
     return nodes
+
+
+def _draw_ellipse(draw, x0, y0, value): # TODO: remove all magic values
+    
+    draw.ellipse([x0 - 25, y0 - 25, x0 + 25, y0 + 25], fill=(44, 27, 133, 0))
+    draw.text((x0 - 20, y0 - 10), value, (150, 150, 150))
+
+
+def _draw_relative_links(draw, pos1, pos2):
+    x0, y0 = pos1
+    x1, y1 = pos2
+    draw.line()
 
 
 def print_tree(nodes, draw):
@@ -55,8 +71,9 @@ def print_tree(nodes, draw):
 
         x0 = width / (2 ** level + 1) * offset_in_level
         y0 = 30 + level * 100
-        draw.ellipse([x0 - 25, y0 - 25, x0 + 25, y0 + 25], fill=(44, 27, 133, 0))
-        draw.text((x0 - 20, y0 - 10), value, (150, 150, 150))
+        _draw_ellipse(draw, x0, y0, value)
+        # _draw_ellipse(draw, width, value, level, offset_in_level)
+        # _draw_relative_links(draw, pos1, pos2)
 
         left = nodes[current_node_id].left
         right = nodes[current_node_id].right
