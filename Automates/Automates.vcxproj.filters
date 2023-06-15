@@ -30,6 +30,9 @@
     <ClCompile Include="Node.cpp">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
+    <ClCompile Include="TestAst.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Node.h">

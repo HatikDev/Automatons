@@ -99,6 +99,8 @@ void makeTreeWithBrackets(std::vector<Node*>& lexems, size_t openIndex, size_t c
     openNode.setChildLeft(lexems[openIndex + 1]);
     openNode.setChildRight(NULL);
 
+    lexems[openIndex + 1]->setParent(&openNode);
+
     lexems[openIndex + 1] = NULL;
     lexems[closeIndex] = NULL;
 
@@ -117,6 +119,7 @@ void makeTreeWithStar(std::vector<Node*>& lexems, size_t openIndex, size_t close
         {
             currentNode.setValue("*_");
             currentNode.setChildLeft(*(it - 1));
+            (*(it - 1))->setParent(&currentNode);
             *(it - 1) = NULL;
             currentNode.setChildRight(NULL);
         }
@@ -137,6 +140,10 @@ void makeTreeWithConcat(std::vector<Node*>& lexems, size_t openIndex, size_t clo
         if (!isSpecialSymbol(currentNode.getValue()) && !isSpecialSymbol(nextNode.getValue()))
         {
             Node* node = new Node("concat", *it, *(it + 1));//{"concat", *it, *(it + 1)};
+
+            (*it)->setParent(node);
+            (*it + 1)->setParent(node);
+
             *it = node;
             *(it + 1) = NULL;
         }
@@ -163,10 +170,15 @@ void makeTreeWithOr(std::vector<Node*>& lexems, size_t openIndex, size_t closeIn
             if (currentNode.getValue() == OR)
             {
                 currentNode.setValue("|_");
+
                 currentNode.setChildLeft(*(it - 1));
+                (*(it - 1))->setParent(&currentNode);
                 *(it - 1) = NULL;
+
                 currentNode.setChildRight(*(it + 1));
+                (*(it + 1))->setParent(&currentNode);
                 *(it + 1) = NULL;
+
                 isChanged = true;
                 break;
             }
@@ -206,7 +218,7 @@ void printASTInFile(std::string filename, Node* tree)
     if (!file.is_open())
         throw std::runtime_error("can't open file");
 
-    // id:%id% left:%left id% right:%right id% value:%value%
+    // id:%id% left:%left% right:%right% value:%value%
 
     std::queue<Node*> nodes;
     nodes.push(tree);
@@ -219,9 +231,8 @@ void printASTInFile(std::string filename, Node* tree)
         
         nodes.pop();
 
-        file << "id:" << currentNode->getID()
-             << " left:" << (leftNode ? leftNode->getID() : 0)
-             << " right:" << (rightNode ? rightNode->getID() : 0)
+        file << "id:" << currentNode
+             << " left:" << leftNode << " right:" << rightNode
              << " value:" << value << std::endl;
 
         if (leftNode)

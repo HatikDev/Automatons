@@ -48,6 +48,16 @@ public:
         m_childRight = node;
     }
 
+    Node* getParent()
+    {
+        return m_parent;
+    }
+
+    void setParent(Node* parent)
+    {
+        m_parent = parent;
+    }
+
     void setAutomaton(Automaton* automaton)
     {
         m_automaton = automaton;
@@ -63,6 +73,7 @@ private:
     std::string m_value;
     Node* m_childLeft;
     Node* m_childRight;
+    Node* m_parent;
     Automaton* m_automaton;
 
     static uint64_t globalID;
