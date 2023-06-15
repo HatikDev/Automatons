@@ -24,17 +24,17 @@ std::vector<Node*> divideInLexems(std::string regex)
         {
             if (!current.empty())
             {
-                Node* node = new Node(current);//Node{ current, NULL, NULL, NULL, NULL };
+                Node* node = new Node(current);//Node{ current, nullptr, nullptr, nullptr, nullptr };
                 lexems.push_back(node);
                 current = "";
             }
-            Node* node = new Node(std::string(1, symbol));//Node{ std::string(1, symbol), NULL, NULL, NULL, NULL };
+            Node* node = new Node(std::string(1, symbol));//Node{ std::string(1, symbol), nullptr, nullptr, nullptr, nullptr };
             lexems.push_back(node);
         }
     }
     if (!current.empty())
     {
-        Node* node = new Node(current);//{ current, NULL, NULL, NULL, NULL };
+        Node* node = new Node(current);//{ current, nullptr, nullptr, nullptr, nullptr };
         lexems.push_back(node);
     }
     return lexems;
@@ -97,12 +97,12 @@ void makeTreeWithBrackets(std::vector<Node*>& lexems, size_t openIndex, size_t c
 
     openNode.setValue("()");
     openNode.setChildLeft(lexems[openIndex + 1]);
-    openNode.setChildRight(NULL);
+    openNode.setChildRight(nullptr);
 
     lexems[openIndex + 1]->setParent(&openNode);
 
-    lexems[openIndex + 1] = NULL;
-    lexems[closeIndex] = NULL;
+    lexems[openIndex + 1] = nullptr;
+    lexems[closeIndex] = nullptr;
 
     std::erase_if(lexems, [](Node* node){ return !node; });
 }
@@ -120,8 +120,8 @@ void makeTreeWithStar(std::vector<Node*>& lexems, size_t openIndex, size_t close
             currentNode.setValue("*_");
             currentNode.setChildLeft(*(it - 1));
             (*(it - 1))->setParent(&currentNode);
-            *(it - 1) = NULL;
-            currentNode.setChildRight(NULL);
+            *(it - 1) = nullptr;
+            currentNode.setChildRight(nullptr);
         }
     }
 
@@ -145,7 +145,7 @@ void makeTreeWithConcat(std::vector<Node*>& lexems, size_t openIndex, size_t clo
             (*it + 1)->setParent(node);
 
             *it = node;
-            *(it + 1) = NULL;
+            *(it + 1) = nullptr;
         }
     }
 
@@ -173,17 +173,17 @@ void makeTreeWithOr(std::vector<Node*>& lexems, size_t openIndex, size_t closeIn
 
                 currentNode.setChildLeft(*(it - 1));
                 (*(it - 1))->setParent(&currentNode);
-                *(it - 1) = NULL;
+                *(it - 1) = nullptr;
 
                 currentNode.setChildRight(*(it + 1));
                 (*(it + 1))->setParent(&currentNode);
-                *(it + 1) = NULL;
+                *(it + 1) = nullptr;
 
                 isChanged = true;
                 break;
             }
         }
-        removedItems += std::count(firstIt, lastIt, (Node*)NULL);
+        removedItems += std::count(firstIt, lastIt, (Node*)nullptr);
         std::erase_if(lexems, [](Node* node){ return !node; });
     }
 }

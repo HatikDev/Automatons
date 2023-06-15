@@ -15,7 +15,7 @@ void makeElementalAutomaton(Node* node)
 
     std::string value = node->getValue();
     State* prevState = startState;
-    State* currentState = NULL;
+    State* currentState = nullptr;
     assert(value.length());
     for (auto symbol : value)
     {
@@ -96,8 +96,8 @@ int main(int argc, char* argv[])
 
     assert(ast.size() == 1);
 
-    printASTInFile("ast.txt", ast[0]);
-    //makeNFA(ast[0]);
+    //printASTInFile("ast.txt", ast[0]);
+    makeNFA(ast[0]);
 
     removeTree(ast[0]);
     return 0;

@@ -7,8 +7,8 @@ class Automaton;
 class Node
 {
 public:
-    Node(std::string value, Node* childLeft = NULL, Node* childRight = NULL)
-        : m_id{globalID++}, m_value{value}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{NULL}
+    Node(std::string value, Node* childLeft = nullptr, Node* childRight = nullptr)
+        : m_id{globalID++}, m_value{value}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{nullptr}
     {}
     Node(const Node&) = delete;
     ~Node() {}
