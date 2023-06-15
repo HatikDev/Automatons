@@ -82,10 +82,6 @@ void makeNFA(Node* node)
 
 void removeTree(Node* root)
 {
-    if (root->getChildLeft())
-        removeTree(root->getChildLeft());
-    if (root->getChildRight())
-        removeTree(root->getChildRight());
     delete root;
 }
 
@@ -97,7 +93,7 @@ int main(int argc, char* argv[])
     assert(ast.size() == 1);
 
     //printASTInFile("ast.txt", ast[0]);
-    makeNFA(ast[0]);
+    //makeNFA(ast[0]);
 
     removeTree(ast[0]);
     return 0;

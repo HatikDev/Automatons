@@ -11,7 +11,17 @@ public:
         : m_id{globalID++}, m_value{value}, m_childLeft{childLeft}, m_childRight{childRight}, m_automaton{nullptr}
     {}
     Node(const Node&) = delete;
-    ~Node() {}
+    ~Node()
+    {
+        delete m_childLeft;
+        m_childLeft = nullptr;
+
+        delete m_childRight;
+        m_childRight = nullptr;
+
+        delete m_automaton; // test functionality
+        m_automaton = nullptr;
+    }
 
     uint64_t getID()
     {
