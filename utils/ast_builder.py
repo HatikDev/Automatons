@@ -1,19 +1,32 @@
-from PIL import Image, ImageDraw
 from collections import deque
-import math
+from PIL import Image, ImageDraw
+
 
 class Node:
-    def __init__(self, id, left, right, value):
-        self.id = id
-        self.left = left
-        self.right = right
-        self.value = value
+    def __init__(self, id, parent, left, right, value):
+        self._id = id
+        self._parent = parent
+        self._left = left
+        self._right = right
+        self._value = value
+
+    def parent(self):
+        return self._parent
+
+    def left(self):
+        return self._left
+
+    def right(self):
+        return self._right
+
+    def value(self):
+        return self._value
 
 
 def read_nodes(filename):
     file = open(filename)
-    nodes = dict()
-    params = list()
+    nodes = {}
+    params = []
     is_first_node = True
     for line in file.readlines():
         params = line.split()
@@ -26,6 +39,8 @@ def read_nodes(filename):
             #     case "value": node_value = value
             if key == "id":
                 node_id = value
+            if key == "parent":
+                node_parent = value
             if key == "left":
                 node_left = value
             if key == "right":
@@ -34,13 +49,13 @@ def read_nodes(filename):
                 node_value = value
         if is_first_node:
             nodes["root"] = node_id
-        nodes[node_id] = Node(node_id, node_left, node_right, node_value)
+        nodes[node_id] = Node(node_id, node_parent, node_left, node_right, node_value)
         is_first_node = False
     file.close()
     return nodes
 
 
-def print_tree(nodes, draw):
+def print_tree(nodes, draw_object):
     level = 0
     old_level = -1
     offset_in_level = 1
@@ -51,15 +66,15 @@ def print_tree(nodes, draw):
             offset_in_level += 1
         else:
             offset_in_level = 1
-        value = nodes[current_node_id].value
+        value = nodes[current_node_id].value()
 
-        x0 = width / (2 ** level + 1) * offset_in_level
+        x0 = WIDTH / (2 ** level + 1) * offset_in_level
         y0 = 30 + level * 100
-        draw.ellipse([x0 - 25, y0 - 25, x0 + 25, y0 + 25], fill=(44, 27, 133, 0))
-        draw.text((x0 - 20, y0 - 10), value, (150, 150, 150))
+        draw_object.ellipse([x0 - 25, y0 - 25, x0 + 25, y0 + 25], fill=(44, 27, 133, 0))
+        draw_object.text((x0 - 20, y0 - 10), value, (150, 150, 150))
 
-        left = nodes[current_node_id].left
-        right = nodes[current_node_id].right
+        left = nodes[current_node_id].left()
+        right = nodes[current_node_id].right()
         if int(left, 16) > 0:
             current_nodes.extend([(left, level + 1)])
         if int(right, 16) > 0:
@@ -67,11 +82,11 @@ def print_tree(nodes, draw):
         old_level = level
 
 
-width = 1440
-height = 900
+WIDTH = 1440
+HEIGHT = 900
 
 
-img  = Image.new(mode = "RGB", size = (width, height), color = (255, 255, 255))
-draw = ImageDraw.Draw(img)
-print_tree(read_nodes("ast.txt"), draw)
+img = Image.new(mode="RGB", size=(WIDTH, HEIGHT), color=(255, 255, 255))
+draw_object = ImageDraw.Draw(img)
+print_tree(read_nodes("ast.txt"), draw_object)
 img.show()
