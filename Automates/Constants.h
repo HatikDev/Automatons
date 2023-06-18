@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+constexpr uint8_t NOFLAGS = 0;
 constexpr uint8_t STARTSTATE = 1;
 constexpr uint8_t ENDSTATE = 2;
 

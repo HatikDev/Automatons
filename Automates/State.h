@@ -7,41 +7,33 @@
 class State
 {
 public:
-    State(bool isStartState, bool isEndState)
-    {
-        id = nextId++;
-        flags = 0;
-
-        if (isStartState)
-            flags |= STARTSTATE;
-        if (isEndState)
-            flags |= ENDSTATE;
-    }
+    State(uint8_t flags) : m_flags{ flags }, m_id{ nextId++ }
+    {}
     ~State() {}
 
     uint64_t getId()
     {
-        return id;
+        return m_id;
     }
 
     uint8_t getFlags()
     {
-        return flags;
+        return m_flags;
     }
 
     void addFlag(uint8_t flag)
     {
-        flags |= flag;
+        m_flags |= flag;
     }
 
     void removeFlag(uint8_t flag)
     {
-        if (flags & flag)
-            flags ^= flag;
+        if (m_flags & flag)
+            m_flags ^= flag;
     }
 
 private:
-    uint64_t id;
-    uint8_t flags;
+    uint64_t m_id;
+    uint8_t m_flags;
     static uint64_t nextId;
 };

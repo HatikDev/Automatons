@@ -8,7 +8,7 @@
 
 void makeElementalAutomaton(Node* node)
 {
-    State* startState = new State(true, false);
+    State* startState = new State(STARTSTATE);
     Automaton* automaton = new Automaton();
     automaton->addState(startState);
     node->setAutomaton(automaton);
@@ -19,7 +19,7 @@ void makeElementalAutomaton(Node* node)
     assert(value.length());
     for (auto symbol : value)
     {
-        currentState = new State(false, false);
+        currentState = new State(NOFLAGS);
         Transition* transition = new Transition(prevState, currentState, symbol);
         automaton->addState(currentState);
         automaton->addTransition(transition);
@@ -42,39 +42,66 @@ void makeNFA(Node* node)
     if (!node->getChildLeft() && !node->getChildRight())
     {
         makeElementalAutomaton(node);
+        return;
     }
-    else
+
+    auto value = node->getValue();
+    if (value == "|_")
     {
-        auto value = node->getValue();
-        if (value == "|_")
-        {
-            Automaton* automaton1 = node->getChildLeft()->getAutomaton();
-            Automaton* automaton2 = node->getChildRight()->getAutomaton();
+        Automaton* automaton1 = node->getChildLeft()->getAutomaton();
+        Automaton* automaton2 = node->getChildRight()->getAutomaton();
 
-            State* startState1 = automaton1->getStartState();
-            startState1->removeFlag(STARTSTATE);
-            State* startState2 = automaton2->getStartState();
-            startState2->removeFlag(STARTSTATE);
+        State* startState1 = automaton1->getStartState();
+        startState1->removeFlag(STARTSTATE);
+        State* startState2 = automaton2->getStartState();
+        startState2->removeFlag(STARTSTATE);
 
-            State* startState = new State(true, false);
+        State* startState = new State(STARTSTATE);
 
-            Automaton* automaton = new Automaton();
-            Transition* transition1 = new Transition(startState, startState1, '?');
-            Transition* transition2 = new Transition(startState, startState2, '?');
-            automaton->addState(startState);
-            automaton->addTransition(transition1);
-            automaton->addTransition(transition2);
-            automaton->addAutomaton(automaton1);
-            automaton->addAutomaton(automaton2);
-        }
-        else if (value == "*_")
-        {
-            
-        }
-        else if (value == "()")
-        {
+        Automaton* automaton = new Automaton();
+        Transition* transition1 = new Transition(startState, startState1, '?');
+        Transition* transition2 = new Transition(startState, startState2, '?');
+        automaton->addState(startState);
+        automaton->addTransition(transition1);
+        automaton->addTransition(transition2);
+        automaton->addAutomaton(automaton1);
+        automaton->addAutomaton(automaton2);
 
-        }
+        node->setAutomaton(automaton);
+        return;
+    }
+    else if (value == "*_")
+    {
+        State* startState = new State(STARTSTATE);
+        State* endState = new State(ENDSTATE);
+
+        Automaton* automaton = node->getChildLeft()->getAutomaton();
+        State* automatonStartState = automaton->getStartState();
+        State* automatonEndState = automaton->getEndState();
+        automatonStartState->removeFlag(STARTSTATE);
+        automatonEndState->removeFlag(ENDSTATE);
+
+        Transition* emptyTransition = new Transition(startState, endState, '?');
+        Transition* firstAutomatonTransition = new Transition(startState, automatonStartState, '?');
+        Transition* secondAutomatonTransition = new Transition(automatonEndState, endState, '?');
+        Transition* backEmptyTransition = new Transition(endState, startState, '?');
+
+        Automaton* nodeAutomaton = new Automaton();
+        nodeAutomaton->addState(automatonStartState);
+        nodeAutomaton->addState(automatonEndState);
+
+        nodeAutomaton->addTransition(emptyTransition);
+        nodeAutomaton->addTransition(firstAutomatonTransition);
+        nodeAutomaton->addTransition(secondAutomatonTransition);
+        nodeAutomaton->addTransition(backEmptyTransition);
+
+        nodeAutomaton->addAutomaton(automaton);
+        node->setAutomaton(automaton);
+        return;
+    }
+    else if (value == "()")
+    {
+
     }
 
     return;
@@ -92,7 +119,7 @@ int main(int argc, char* argv[])
 
     assert(ast.size() == 1);
 
-    //printASTInFile("ast.txt", ast[0]);
+    printASTInFile("ast.txt", ast[0]);
     //makeNFA(ast[0]);
 
     removeTree(ast[0]);
